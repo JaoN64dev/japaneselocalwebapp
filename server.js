@@ -1,0 +1,40 @@
+// akko immersion player: local server
+//   - serves the site
+//   - /api/subs/*   Japanese subtitles (kitsunekko.net + GitHub mirror)   server/subtitles.js
+//   - /api/dict, /api/tokenize   offline dictionary + word splitting     server/dictionary.js
+//   - /api/anki     AnkiConnect passthrough                               server/anki.js
+//   - /api/podcasts podcast feeds + transcripts                           server/podcasts.js
+
+const path = require('path');
+const express = require('express');
+const subtitles = require('./server/subtitles');
+const dictionary = require('./server/dictionary');
+const anki = require('./server/anki');
+const podcasts = require('./server/podcasts');
+
+const hostname = '127.0.0.1';
+const port = 3000;
+
+const app = express();
+
+// ---------- API ----------
+app.use('/api/subs', subtitles.router);
+app.use('/api', dictionary.router);
+app.use('/api/anki', anki.router);
+app.use('/api/podcasts', podcasts.router);
+
+// ---------- static site (only the files the pages need) ----------
+const file = (name) => (req, res) => res.sendFile(path.join(__dirname, name));
+app.get(['/', '/index.html'], file('index.html'));
+app.get('/reading.html', file('reading.html'));
+app.get('/podcasts.html', file('podcasts.html'));
+app.get('/style.css', file('style.css'));
+for (const dir of ['scripts', 'images', 'fonts', 'node_modules/@ffmpeg']) {
+  app.use('/' + dir, express.static(path.join(__dirname, dir)));
+}
+
+// Run Server
+app.listen(port, hostname, () => {
+  console.log('Server running at http://' + hostname + ':' + port + '\n');
+  dictionary.init();
+});
