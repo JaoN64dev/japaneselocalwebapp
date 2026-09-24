@@ -63,6 +63,7 @@ export async function mine(entry, ctx) {
         id: newId(added),
         word: entry.word,
         reading: entry.reading,
+        forms: entry.forms || [],          // other spellings, for finding word audio
         meaning: entry.senses.slice(0, 3).map((s) => s.gloss.join("; ")).join(" / "),
         surface: ctx.word || "",
         sentence: ctx.sentence || "",

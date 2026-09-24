@@ -3,6 +3,7 @@
 //   - /api/subs/*   Japanese subtitles (kitsunekko.net + GitHub mirror)   server/subtitles.js
 //   - /api/dict, /api/tokenize   offline dictionary + word splitting     server/dictionary.js
 //   - /api/anki     AnkiConnect passthrough                               server/anki.js
+//   - /api/audio    word pronunciation audio                              server/audio.js
 //   - /api/podcasts podcast feeds + transcripts                           server/podcasts.js
 
 const path = require('path');
@@ -10,6 +11,7 @@ const express = require('express');
 const subtitles = require('./server/subtitles');
 const dictionary = require('./server/dictionary');
 const anki = require('./server/anki');
+const audio = require('./server/audio');
 const podcasts = require('./server/podcasts');
 
 const hostname = '127.0.0.1';
@@ -21,6 +23,7 @@ const app = express();
 app.use('/api/subs', subtitles.router);
 app.use('/api', dictionary.router);
 app.use('/api/anki', anki.router);
+app.use('/api/audio', audio.router);
 app.use('/api/podcasts', podcasts.router);
 
 // ---------- static site (only the files the pages need) ----------

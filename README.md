@@ -76,6 +76,8 @@ Words can't be looked up until these lines appear.
 
 Anki must be open while you use the app. You don't need to change any AnkiConnect settings, because the app connects to it through the local server.
 
+Cards can include a recording of the word being said. Set a field to **word audio** in the Anki panel on the Watch page. The audio comes from [JapanesePod101](https://www.japanesepod101.com/) or, if that has none, from [Lingua Libre](https://lingualibre.org/) recordings on Wikimedia Commons. Both are free, but you need an internet connection for this.
+
 ## Optional: GitHub token
 
 Subtitles are also searched in a GitHub mirror. Without a token, GitHub allows only 60 requests per hour. If you use the app a lot, you can raise that limit with a [personal access token](https://github.com/settings/tokens) (it doesn't need any permissions):

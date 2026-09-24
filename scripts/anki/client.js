@@ -5,13 +5,13 @@
 // record the line from, screenshot: bool } — together with item.cueStart/cueEnd.
 
 import { state } from "../core/state.js";
-import { store, escapeHtml, postJson } from "../core/utils.js";
+import { store, escapeHtml, getJson, postJson } from "../core/utils.js";
 import { toast } from "../core/toast.js";
 import { setWordStatus, saveWords } from "../words/status.js";
 import { saveItem } from "../mining.js";
 
 const KEY = "akko-anki";
-const DEFAULTS = { deck: "", model: "", maps: {}, tags: "akko immersion", auto: false, audio: true, shot: true };
+const DEFAULTS = { deck: "", model: "", maps: {}, tags: "akko immersion", auto: false, audio: true, wordAudio: true, shot: true };
 
 // what the site can put into an Anki field
 export const SOURCES = {
@@ -23,6 +23,7 @@ export const SOURCES = {
     sentence: "sentence",
     sentenceBold: "sentence, word in bold",
     audio: "line audio",
+    wordAudio: "word audio",
     screenshot: "screenshot",
     source: "show, episode, time",
 };
@@ -31,6 +32,7 @@ export const SOURCES = {
 const GUESSES = [
     [/^is[A-Z]|^is /, ""],                                   // Lapis card-type flags
     [/sentence.?(furigana|eng|translation|meaning)/i, ""],
+    [/(word|expression|vocab|term|reading).?audio/i, "wordAudio"],
     [/sentence.?audio|^audio$/i, "audio"],
     [/audio/i, ""],
     [/picture|image|screenshot|photo/i, "screenshot"],
@@ -102,6 +104,11 @@ export async function loadFields() {
     fieldNames = await call("modelFieldNames", { modelName: c.model });
     if (!c.maps[c.model]) {
         saveCfg({ maps: { ...c.maps, [c.model]: Object.fromEntries(fieldNames.map((f) => [f, guess(f)])) } });
+    } else if (!c.wordAudioMapped) {
+        // maps saved before "word audio" existed left fields like "Word Audio" empty; fill them once
+        const maps = Object.fromEntries(Object.entries(c.maps).map(([model, map]) => [model,
+            Object.fromEntries(Object.entries(map).map(([f, src]) => [f, !src && guess(f) === "wordAudio" ? "wordAudio" : src]))]));
+        saveCfg({ maps, wordAudioMapped: true });
     }
     return { fieldNames, map: cfg().maps[c.model] };
 }
@@ -197,6 +204,13 @@ async function captureMedia(item, media, wantShot, wantAudio) {
     return out;
 }
 
+// Pronunciation of the word itself, found by the server (JapanesePod101, then Lingua Libre)
+const fetchWordAudio = (item) => {
+    const params = new URLSearchParams({ word: item.word, reading: item.reading || "" });
+    (item.forms || []).forEach((f) => params.append("form", f));
+    return getJson(`/api/audio?${params}`);
+};
+
 // ---------- building the note ----------
 
 function fieldValue(source, item) {
@@ -225,10 +239,16 @@ export async function send(item, media) {
     const fields = Object.fromEntries(fieldNames.map((f) => [f, fieldValue(map[f], item)]));
 
     say(`adding ${item.word}…`, false, { quiet: true });
+    // download the word's audio while the line is being recorded
+    const wordAudioP = c.wordAudio && fieldsFor("wordAudio").length > 0
+        ? fetchWordAudio(item).catch((err) => ({ error: err.message }))
+        : null;
     const result = await captureMedia(item, media,
         c.shot && fieldsFor("screenshot").length > 0,
         c.audio && fieldsFor("audio").length > 0);
     const stamp = `akko_${item.added}`;
+    const wordAudio = await wordAudioP;
+    if (wordAudio?.error) result.problems.push(wordAudio.error);
 
     const note = {
         deckName: c.deck,
@@ -238,7 +258,9 @@ export async function send(item, media) {
         options: { allowDuplicate: false, duplicateScope: "deck" },
     };
     if (result.screenshot) note.picture = [{ data: result.screenshot, filename: `${stamp}.jpg`, fields: fieldsFor("screenshot") }];
-    if (result.audio) note.audio = [{ data: result.audio.data, filename: `${stamp}.${result.audio.ext}`, fields: fieldsFor("audio") }];
+    note.audio = [];
+    if (result.audio) note.audio.push({ data: result.audio.data, filename: `${stamp}.${result.audio.ext}`, fields: fieldsFor("audio") });
+    if (wordAudio?.data) note.audio.push({ data: wordAudio.data, filename: `${stamp}_word.${wordAudio.ext}`, fields: fieldsFor("wordAudio") });
 
     try {
         item.ankiNoteId = await call("addNote", { note });
