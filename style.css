@@ -61,6 +61,7 @@ html {scroll-behavior: smooth;}
 body {
   font-family: 'Nunito', Verdana, sans-serif;
   font-size: 16px;
+  line-height: 1.5;
   margin: 0;
   color: var(--text-color);
   background-color: var(--bg-color);
@@ -70,35 +71,37 @@ body {
 
 .flex {
   display: flex;
+  align-items: flex-start;
+  gap: 24px;
   max-width: 100%; 
   margin: auto;
 }
 
 
+/* fills the screen up to 1440px, with a 16px gutter on each side */
 #container {
-  width:1440px;
-  max-width: 100%;
-  margin:auto;
+  width: min(1440px, 100% - 32px);
+  margin: 0 auto 2em;
 }
 header {
   margin: 0 auto;
   max-width:1440px;
 }
+header img {display: block; max-width: 100%; height: auto;}
 
 main {
+  flex: 1;
+  min-width: 0;
+  container-type: inline-size;   /* lets the player stack by the width of main, not the window */
   background: var(--main-color);
   border-radius: 16px;
   box-shadow: 2px 2px 6px var(--border-shadow);
-  padding-inline: 1em;
-  max-width: 1160px;
-  width: 1160px;
+  padding: .5em 2em 2em;
 }
 #sidebar {
-  max-width: 240px;
-  width: 240px;
-  padding: 1em;
-  margin-right: 10px;
+  flex: 0 0 240px;
 }
+#sidebar > * + * {margin-top: 1em;}
 
 .note {
   background-color: var(--post-bg);
@@ -131,7 +134,9 @@ main .note time {
 
 
 main h1 {
-  padding: .2em 1em;
+  margin: .6em 0 .8em;
+  line-height: 1.25;
+  padding: .3em .8em;
   text-shadow: 3px 3px var(--text-shadow);
   background-color: var(--text-bg);
   border-radius: 4px;
@@ -154,14 +159,14 @@ article .main-content h3 {
   margin-inline: 15px;
   text-shadow: 2px 2px var(--dark-color);
   border-bottom: 2px dashed var(--border-color);
-  margin-block: 1.5em 0;
+  margin-block: 0 .6em;
   letter-spacing: 1px;
 }
 
 .bubble {
   background-color: var(--text-bg);
   margin: 1em auto;
-  padding: .4em;
+  padding: .6em .8em;
   border-radius: 12px;
 }
 .bubble input {vertical-align: middle;}
@@ -226,7 +231,7 @@ h1 {font-size: 32px;}
 #navi li:nth-child(even) {background: var(--nav-bg-color2);}
 #navi a {
   display:block;
-  padding: 2px 8px;
+  padding: 5px 12px;
   font-weight: bold;
   color: var(--nav-link-color);
   width:100%;
@@ -243,6 +248,8 @@ h1 {font-size: 32px;}
   font-weight: bold;
   list-style-type: "";
   border-block: 2px solid var(--main-color);
+  padding-block: .15em;
+  cursor: pointer;
   transition: .2s all;
 }
 
@@ -447,11 +454,12 @@ footer {
 
 footer a, footer a:hover, footer a:visited {color: var(--main-color);}
 
-@media only screen and (max-width: 1440px) {
-  #container {max-width: 960px;}
-  .flex {flex-wrap: wrap;}
-  main {max-width: 700px;}
-  .page-desc {max-width: 100%;}
+/* narrow windows: sidebar goes above the content */
+@media only screen and (max-width: 900px) {
+  .flex {flex-direction: column; align-items: stretch;}
+  #sidebar {flex-basis: auto;}
+  .side-sticky {position: static;}
+  main {padding-inline: 1em;}
 }
 
 
@@ -463,6 +471,7 @@ footer a, footer a:hover, footer a:visited {color: var(--main-color);}
 
 [hidden] {display: none !important;}
 section {margin-bottom: 2em;}
+section:last-of-type {margin-bottom: 1em;}
 .muted {color: var(--visited-link-color); margin: .2em 0;}
 .status {min-height: 1.2em; font-size: smaller; margin: .4em 0;}
 .status.dark {color: var(--dark-link-color);}
@@ -474,7 +483,7 @@ kbd {
   font-family: inherit;
   box-shadow: 0 1px 0 var(--border-color);
 }
-#navi .keys li {padding: 2px 8px; color: var(--dark-link-color); font-size: smaller;}
+#navi .keys li {padding: 4px 12px; color: var(--dark-link-color); font-size: smaller;}
 
 main button, .btn {
   font: inherit;
@@ -505,7 +514,7 @@ main input[type=search], main input[type=url], main select {
 .results {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 main .card {
   display: flex;
@@ -530,12 +539,12 @@ main .card {
 
 .sub-browser {padding: 1em 1.4em;}
 .sub-browser h3 small {font-weight: normal; color: var(--border-color);}
-.sub-browser .row {display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: .6em; margin: .4em 0; font-weight: bold;}
+.sub-browser .row {display: grid; grid-template-columns: 150px 1fr; align-items: center; gap: .6em; margin: .6em 0; font-weight: bold;}
 .file-list, .zip-entries {list-style: none; padding: 0; margin: .5em 0 0; max-height: 340px; overflow: auto;}
 .zip-entries {max-height: none; margin: 0 0 .4em 1.6em; border-left: 2px dashed var(--border-color);}
 .file-list li {
   display: flex; gap: .6em; align-items: center;
-  padding: .3em .5em;
+  padding: .45em .6em;
   border-bottom: 1px dashed var(--border-color);
   cursor: pointer;
   color: var(--dark-link-color);
@@ -548,7 +557,7 @@ main .card {
 .file-list .size {font-size: .8em; color: var(--visited-link-color); white-space: nowrap;}
 
 /* ---- sources ---- */
-.source-bar {display: flex; flex-wrap: wrap; gap: .6em; align-items: center; padding: .6em;}
+.source-bar {display: flex; flex-wrap: wrap; gap: .6em; align-items: center;}
 .url-form {display: flex; gap: .4em; flex: 1; min-width: 240px;}
 .url-form input {flex: 1;}
 
@@ -557,8 +566,14 @@ main .card {
 .audio-bar select {max-width: 100%;}
 .audio-status {font-size: .85em;}
 
+/* keep the source bars close to the video */
+#player-section .bubble {margin-block: .6em;}
+#player-section > .status {margin: 0 0 .6em;}
+#player-section > .status:empty,
+#search-section > .status:empty {display: none;}
+
 /* ---- player ---- */
-.player-layout {display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 12px;}
+.player-layout {display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: start;}
 .stage {
   position: relative;
   background: #000;
@@ -610,8 +625,8 @@ main .card {
 .sub-overlay .w:hover {background: #ff0800cc;}
 
 .toolbar {
-  display: flex; flex-wrap: wrap; align-items: center; gap: .4em .6em;
-  margin-top: 8px; padding: .5em;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .6em 1em;
+  margin-top: 12px; padding: .7em 1em;
   background: var(--text-bg);
   border-radius: 10px;
   font-size: .9em;
@@ -629,19 +644,21 @@ main .card {
   background: var(--post-bg);
   border-radius: 10px;
   overflow: hidden;
-  max-height: 560px;
+  height: 560px;
   box-shadow: 2px 2px 6px var(--border-shadow);
 }
 .transcript-head {
   display: flex; justify-content: space-between;
-  padding: .4em .8em;
+  align-items: center;
+  gap: .6em;
+  padding: .5em 1em;
   background: var(--text-bg);
   font-weight: bold;
   font-size: .9em;
 }
 .transcript {list-style: none; margin: 0; padding: 0; overflow: auto; flex: 1; position: relative;}.transcript li {
-  display: flex; gap: .5em;
-  padding: .35em .6em;
+  display: flex; gap: .6em;
+  padding: .5em .8em;
   border-bottom: 1px dashed var(--border-color);
   color: #333;
   cursor: pointer;
@@ -680,8 +697,8 @@ main .card {
 .entry small {color: var(--border-color);}
 
 /* ---- mined ---- */
-.mined-actions {display: flex; gap: .6em; padding: .6em;}
-.mined {list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px;}
+.mined-actions {display: flex; gap: .6em;}
+.mined {list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;}
 .mined li.note {margin: 0; padding: .8em 1.2em; font-size: .9em; color: #333;}
 .mined .empty {color: var(--post-bg);}
 .mined-head {display: flex; align-items: baseline; gap: .5em;}
@@ -819,7 +836,7 @@ main .resume-card .forget {position: absolute; top: 4px; right: 4px; padding: 0 
 .resume-note button {padding: 0 .6em; font-size: .9em;}
 
 /* ---- anki ---- */
-.anki-panel {margin: 0 0 1em; padding: .6em 1.4em; color: #333;}
+.anki-panel {margin: 0 0 1.5em; padding: .8em 1.4em; color: #333;}
 .anki-panel summary {
   display: flex; justify-content: space-between; align-items: center;
   font-weight: bold; font-size: 1.1em; cursor: pointer;
@@ -841,7 +858,7 @@ main .resume-card .forget {position: absolute; top: 4px; right: 4px; padding: 0 
    pages: tabs + shared bits
    ========================================================= */
 
-.tabs {display: flex; gap: 6px; margin: 1em 0 .2em; border-bottom: 3px solid var(--text-bg);}
+.tabs {display: flex; flex-wrap: wrap; gap: 6px; margin: 1em 0 .2em; border-bottom: 3px solid var(--text-bg);}
 .tab {
   padding: .35em 1.1em .25em;
   border-radius: 10px 10px 0 0;
@@ -859,6 +876,7 @@ main .resume-card .forget {position: absolute; top: 4px; right: 4px; padding: 0 
 
 .hint-light, .muted-light, .empty-light {color: var(--post-bg); font-size: .85em;}
 .empty-light {margin: .4em 0;}
+.results > .empty-light, .results > .status {grid-column: 1 / -1;}
 .bar {margin-top: auto; height: 5px; background: var(--border-color); border-radius: 3px; overflow: hidden;}
 .bar i {display: block; height: 100%; background: var(--highlight);}
 .comp-badge.inline {position: static; display: inline-block; background: var(--text-bg); font-size: .8em;}
@@ -881,11 +899,11 @@ label.btn.small {padding: .1em .6em; font-size: .9em;}
 .toast.bad {border-color: #c62828; color: #c62828;}
 
 /* ---- read: text ---- */
-.mode-switch {display: inline-flex; gap: 4px; background: var(--text-bg); padding: 4px; border-radius: 10px; margin-bottom: 1em;}
+.mode-switch {display: inline-flex; gap: 4px; background: var(--text-bg); padding: 4px; border-radius: 10px; margin-bottom: 1.5em;}
 main .mode-switch button {border: 0; background: transparent; color: var(--post-bg);}
 main .mode-switch button[aria-selected="true"] {background: var(--post-bg); color: var(--dark-link-color);}
 
-.library-actions {display: flex; flex-wrap: wrap; gap: .6em; align-items: center; padding: .6em;}
+.library-actions {display: flex; flex-wrap: wrap; gap: .6em; align-items: center;}
 .paste-form {padding: 1em 1.4em; color: #333;}
 .paste-form .row {display: grid; grid-template-columns: 60px 1fr; align-items: center; gap: .6em; font-weight: bold;}
 .paste-form textarea {
@@ -894,7 +912,7 @@ main .mode-switch button[aria-selected="true"] {background: var(--post-bg); colo
   padding: .6em; border: 2px solid var(--border-color); border-radius: 8px;
   resize: vertical;
 }
-.library {list-style: none; padding: 0; display: grid; gap: 10px;}
+.library {list-style: none; padding: 0; display: grid; gap: 12px;}
 .library .empty {color: var(--post-bg);}
 .library-item {display: flex; align-items: center; gap: .8em; margin: 0; padding: .7em 1.2em; color: #333; cursor: pointer;}
 .library-item:hover {background: #fff;}
@@ -906,7 +924,7 @@ main .mode-switch button[aria-selected="true"] {background: var(--post-bg); colo
 
 .reader-bar {display: flex; flex-wrap: wrap; align-items: center; gap: .8em; padding: .5em .8em;}
 .reader-title {flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1.1em;}
-.reader-tools {margin: 8px 0;}
+.reader-tools {margin: 12px 0;}
 .reader-text {
   --reader-size: 22px;
   position: relative;
@@ -927,7 +945,7 @@ main .mode-switch button[aria-selected="true"] {background: var(--post-bg); colo
 /* ---- read: manga ---- */
 .manga-hint {color: #333; font-size: .85em; padding: .7em 1.2em;}
 .manga-hint code {background: #fff; padding: 0 .3em; border-radius: 3px;}
-.manga-tools {margin: 8px 0;}
+.manga-tools {margin: 12px 0;}
 .manga-page-count, .manga-page {font-variant-numeric: tabular-nums; font-weight: bold; min-width: 5em; text-align: center;}
 #manga-slider {flex: 1; min-width: 120px;}
 .manga-stage {
@@ -959,10 +977,10 @@ main .mode-switch button[aria-selected="true"] {background: var(--post-bg); colo
 .ocr-block:hover rt, .show-text .ocr-block rt {display: revert;}
 
 /* ---- listen ---- */
-.suggest {color: var(--post-bg); font-size: .9em; display: flex; flex-wrap: wrap; gap: .4em; align-items: center;}
+.suggest {color: var(--post-bg); font-size: .9em; display: flex; flex-wrap: wrap; gap: .5em; align-items: center; margin: .8em 0;}
 main .chip {padding: .1em .7em; font-size: .9em; border-radius: 999px;}
-.episodes {list-style: none; padding: 0; display: grid; gap: 8px;}
-.episode {display: flex; gap: .8em; align-items: flex-start; padding: .6em .9em; background: var(--post-bg); color: #333; border-radius: 10px; cursor: pointer;}
+.episodes {list-style: none; padding: 0; display: grid; gap: 12px;}
+.episode {display: flex; gap: .9em; align-items: flex-start; padding: .8em 1em; background: var(--post-bg); color: #333; border-radius: 10px; cursor: pointer;}
 .episode:hover {background: #fff;}
 .episode.done {opacity: .65;}
 main .episode .play {border-radius: 50%; width: 2.2em; height: 2.2em; padding: 0; flex: none;}
@@ -973,23 +991,22 @@ main .episode .play {border-radius: 50%; width: 2.2em; height: 2.2em; padding: 0
 main .more {margin: .8em auto; display: block;}
 
 .pod-player {margin-bottom: 1.5em;}
-.pod-now {display: flex; gap: .8em; align-items: center; padding: .6em;}
+.pod-now {display: flex; gap: .8em; align-items: center;}
 .pod-now img {width: 56px; height: 56px; border-radius: 6px; object-fit: cover;}
 .pod-now-text {display: flex; flex-direction: column; min-width: 0;}
 .pod-now-text b {overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-.pod-player audio {width: 100%; margin: 6px 0 2px;}
-.pod-transcript-col {margin-top: 8px; max-height: 480px;}
+.pod-player audio {width: 100%; margin: 8px 0 4px;}
+.pod-transcript-col {margin-top: 12px; height: auto; max-height: 480px;}
 .pod-transcript-status {margin: .4em .8em;}
 .pod-transcript-status:empty {display: none;}
 .transcript.untimed li {cursor: default;}
 
-@media only screen and (max-width: 1100px) {
+/* transcript goes under the video when main is too narrow for both side by side */
+@container (max-width: 960px) {
   .player-layout {grid-template-columns: 1fr;}
-  .transcript-col {max-height: 320px;}
+  .transcript-col:not(.pod-transcript-col) {height: 320px;}
 }
 @media only screen and (max-width: 600px) {
-  main {width: 100%;}
-  #sidebar {width: 100%; max-width: 100%;}
   .sub-browser .row {grid-template-columns: 1fr;}
   .sub-overlay {--sub-size: 18px !important;}
 }
