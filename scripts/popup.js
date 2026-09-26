@@ -8,6 +8,7 @@ import { $ } from "./core/dom.js";
 import { store, escapeHtml, getJson } from "./core/utils.js";
 import { STATUSES, wordStatus, setWordStatus } from "./words/status.js";
 import { plainText } from "./words/render.js";
+import { morae, pattern, isHigh } from "./words/pitch.js";
 import * as mining from "./mining.js";
 import * as anki from "./anki/client.js";
 
@@ -68,20 +69,11 @@ export function setPopupStatus(status) {
 
 // ---------- pitch accent ----------
 
-// "きょう" -> ["きょ", "う"]: small kana belong to the mora before them
-const morae = (kana) => kana.match(/.[ゃゅょぁぃぅぇぉゎャュョァィゥェォヮ]?/g) || [];
-
-const PATTERN = (n, count) => (n === 0 ? "heiban: low, then stays high"
-    : n === 1 ? "atamadaka: high, then drops"
-    : n === count ? "odaka: rises, drops after the word"
-    : `nakadaka: rises, drops after mora ${n}`);
-
 // Draw a reading with a line over the high morae and a tick where the pitch drops
 function pitchHtml(reading, n) {
     const m = morae(reading);
-    const high = (i) => (n === 0 ? i > 0 : n === 1 ? i === 0 : i >= 1 && i < n);
-    return `<span class="pitch" title="[${n}] ${PATTERN(n, m.length)}">`
-        + m.map((mora, i) => `<span class="${[high(i) && "h", n > 0 && i === n - 1 && "drop"].filter(Boolean).join(" ")}">${escapeHtml(mora)}</span>`).join("")
+    return `<span class="pitch" title="[${n}] ${pattern(n, m.length)}">`
+        + m.map((mora, i) => `<span class="${[isHigh(n, i) && "h", n > 0 && i === n - 1 && "drop"].filter(Boolean).join(" ")}">${escapeHtml(mora)}</span>`).join("")
         + `<sup>${n}</sup></span>`;
 }
 

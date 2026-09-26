@@ -64,6 +64,7 @@ export async function mine(entry, ctx) {
         word: entry.word,
         reading: entry.reading,
         forms: entry.forms || [],          // other spellings, for finding word audio
+        pitch: ((entry.pitch || []).find((p) => p.reading === entry.reading) || {}).accents || [],
         meaning: entry.senses.slice(0, 3).map((s) => s.gloss.join("; ")).join(" / "),
         surface: ctx.word || "",
         sentence: ctx.sentence || "",
@@ -72,6 +73,7 @@ export async function mine(entry, ctx) {
         videoName: info.videoName || "",
         cueStart: info.cueStart ?? null,
         cueEnd: info.cueEnd ?? null,
+        translation: info.translation || "",
         added,
     };
     mined.unshift(item);

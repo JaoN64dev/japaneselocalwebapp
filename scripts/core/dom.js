@@ -13,7 +13,7 @@ export const el = {
     subFile: $("#sub-file"), nowPlaying: $("#now-playing"),
     video: $("#video"), overlay: $("#sub-overlay"), stageEmpty: $("#stage-empty"),
     prevLine: $("#prev-line"), replayLine: $("#replay-line"), nextLine: $("#next-line"),
-    autoPause: $("#auto-pause"), blurSubs: $("#blur-subs"), hideSubs: $("#hide-subs"),
+    autoPause: $("#auto-pause"), hoverPause: $("#hover-pause"), blurSubs: $("#blur-subs"), hideSubs: $("#hide-subs"),
     offsetMinus: $("#offset-minus"), offsetPlus: $("#offset-plus"), offsetValue: $("#offset-value"),
     syncHere: $("#sync-here"), subSize: $("#sub-size"),
     furigana: $("#furigana-mode"), colorWords: $("#color-words"),

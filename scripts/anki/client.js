@@ -9,6 +9,7 @@ import { store, escapeHtml, getJson, postJson } from "../core/utils.js";
 import { toast } from "../core/toast.js";
 import { setWordStatus, saveWords } from "../words/status.js";
 import { saveItem } from "../mining.js";
+import { pitchCardHtml, pitchNotes } from "../words/pitch.js";
 
 const KEY = "akko-anki";
 const DEFAULTS = { deck: "", model: "", maps: {}, tags: "akko immersion", auto: false, audio: true, wordAudio: true, shot: true };
@@ -20,8 +21,11 @@ export const SOURCES = {
     reading: "reading",
     furigana: "word[reading] (furigana)",
     meaning: "meaning",
+    pitch: "pitch accent (drawn)",
+    pitchNotes: "pitch accent pattern (text)",
     sentence: "sentence",
     sentenceBold: "sentence, word in bold",
+    translation: "sentence translation (2nd subs)",
     audio: "line audio",
     wordAudio: "word audio",
     screenshot: "screenshot",
@@ -31,8 +35,11 @@ export const SOURCES = {
 // first match wins; covers Basic, Lapis, Kaishi, JP Mining Note, Animecards…
 const GUESSES = [
     [/^is[A-Z]|^is /, ""],                                   // Lapis card-type flags
-    [/sentence.?(furigana|eng|translation|meaning)/i, ""],
+    [/sentence.?(eng|translation|meaning)/i, "translation"],
+    [/sentence.?furigana/i, ""],
     [/(word|expression|vocab|term|reading).?audio/i, "wordAudio"],
+    [/pitch.*(notes|pattern)/i, "pitchNotes"],
+    [/pitch|accent/i, "pitch"],
     [/sentence.?audio|^audio$/i, "audio"],
     [/audio/i, ""],
     [/picture|image|screenshot|photo/i, "screenshot"],
@@ -43,6 +50,8 @@ const GUESSES = [
     [/word|expression|vocab|front|kanji|term|key/i, "word"],
     [/source|notes|misc/i, "source"],
 ];
+// sources added after people had already set up their fields
+const LATER_SOURCES = ["wordAudio", "pitch", "pitchNotes", "translation"];
 const guess = (field) => (GUESSES.find(([re]) => re.test(field)) || [null, ""])[1];
 
 // always read fresh: another page may have changed it
@@ -104,11 +113,19 @@ export async function loadFields() {
     fieldNames = await call("modelFieldNames", { modelName: c.model });
     if (!c.maps[c.model]) {
         saveCfg({ maps: { ...c.maps, [c.model]: Object.fromEntries(fieldNames.map((f) => [f, guess(f)])) } });
-    } else if (!c.wordAudioMapped) {
-        // maps saved before "word audio" existed left fields like "Word Audio" empty; fill them once
-        const maps = Object.fromEntries(Object.entries(c.maps).map(([model, map]) => [model,
-            Object.fromEntries(Object.entries(map).map(([f, src]) => [f, !src && guess(f) === "wordAudio" ? "wordAudio" : src]))]));
-        saveCfg({ maps, wordAudioMapped: true });
+    } else {
+        // maps saved before these sources existed left their fields empty (or, for
+        // "Pitch Accent Notes", on "source"); fill them in once
+        const todo = LATER_SOURCES.filter((s) => !(c.filled || (c.wordAudioMapped ? ["wordAudio"] : [])).includes(s));
+        if (todo.length) {
+            const fill = (f, src) => {
+                const g = guess(f);
+                return todo.includes(g) && (!src || (g === "pitchNotes" && src === "source")) ? g : src;
+            };
+            const maps = Object.fromEntries(Object.entries(c.maps).map(([model, map]) => [model,
+                Object.fromEntries(Object.entries(map).map(([f, src]) => [f, fill(f, src)]))]));
+            saveCfg({ maps, filled: LATER_SOURCES });
+        }
     }
     return { fieldNames, map: cfg().maps[c.model] };
 }
@@ -223,7 +240,10 @@ function fieldValue(source, item) {
         case "furigana": return item.reading && item.reading !== item.word
             ? `${escapeHtml(item.word)}[${escapeHtml(item.reading)}]` : escapeHtml(item.word);
         case "meaning": return escapeHtml(item.meaning);
+        case "pitch": return (item.pitch || []).map((n) => pitchCardHtml(item.reading || item.word, n)).join("・");
+        case "pitchNotes": return (item.pitch || []).map((n) => escapeHtml(pitchNotes(item.reading || item.word, n))).join("<br>");
         case "sentence": return escapeHtml(item.sentence);
+        case "translation": return escapeHtml(item.translation || "");
         case "sentenceBold": return bold;
         case "source": return escapeHtml(`${item.source} ${item.time}`.trim());
         default: return "";

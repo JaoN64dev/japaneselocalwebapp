@@ -8,12 +8,13 @@ import { bindWordDisplay } from "../words/display.js";
 const KEY = "akko-settings";
 
 function current() {
-    return { autoPause: false, blur: false, hide: false, size: 28, ...store.get(KEY, {}) };
+    return { autoPause: false, hoverPause: true, blur: false, hide: false, size: 28, ...store.get(KEY, {}) };
 }
 
 export function applySettings() {
     const s = {
         autoPause: el.autoPause.checked,
+        hoverPause: el.hoverPause.checked,
         blur: el.blurSubs.checked,
         hide: el.hideSubs.checked,
         size: Number(el.subSize.value),
@@ -21,6 +22,7 @@ export function applySettings() {
     el.overlay.classList.toggle("blurred", s.blur);
     el.overlay.classList.toggle("hidden", s.hide);
     el.overlay.style.setProperty("--sub-size", s.size + "px");
+    document.getElementById("sub2-overlay").style.setProperty("--sub-size", s.size + "px");
     store.set(KEY, { ...store.get(KEY, {}), ...s });
 }
 
@@ -32,10 +34,11 @@ export function toggleHideSubs() {
 export function init() {
     const s = current();
     el.autoPause.checked = s.autoPause;
+    el.hoverPause.checked = s.hoverPause;
     el.blurSubs.checked = s.blur;
     el.hideSubs.checked = s.hide;
     el.subSize.value = s.size;
-    [el.autoPause, el.blurSubs, el.hideSubs, el.subSize].forEach((i) => i.addEventListener("input", applySettings));
+    [el.autoPause, el.hoverPause, el.blurSubs, el.hideSubs, el.subSize].forEach((i) => i.addEventListener("input", applySettings));
     applySettings();
     bindWordDisplay(el.furigana, el.colorWords);
 }

@@ -7,12 +7,14 @@
     <link href="/style.css" rel="stylesheet" type="text/css" media="all">
     <script type="module" src="/scripts/pages/watch.js"></script>
 </head>
-<body>
+<body class="watch-page">
     <header>
+        <!-- banner 
         <img alt="nomnomnami.com" srcset="
               /images/header.png 1440w,
               /images/header.png 800w
             " src="/images/header.png">
+        -->
         <marquee style="margin-bottom:1em;" scrollamount="4">SITE BY: AKKO ・ 毎日見る ・ SITE BY: AKKO ・ 字幕は日本語で ・ SITE BY: AKKO ・ 分からなくても大丈夫 ・ SITE BY: AKKO ・  SITE BY: AKKO ・  SITE BY: AKKO ・ SITE BY: AKKO ・i might be narcisist</marquee>
     </header>
     <div id="container">
@@ -26,6 +28,7 @@
                 <li><a href="/" aria-current="page">観る watch</a></li>
                 <li><a href="/reading.html">読む read</a></li>
                 <li><a href="/podcasts.html">聴く listen</a></li>
+                <li><a href="/about.html">私 about</a></li>
             </ul>
             </details>
             <details open=""><summary>Watch</summary>
@@ -33,7 +36,6 @@
                 <li><a href="#search-section">search</a></li>
                 <li><a href="#player-section">player</a></li>
                 <li><a href="#mined-section">mined words</a></li>
-                <li><a href="#backup-section">backup</a></li>
             </ul>
             </details>
             <details><summary>Keys</summary>
@@ -43,9 +45,15 @@
                 <li><kbd>S</kbd> replay line</li>
                 <li><kbd>D</kbd> next line</li>
                 <li><kbd>H</kbd> hide subs</li>
+                <li><kbd>T</kbd> 2nd subs: when paused / always / off</li>
                 <li><kbd>F</kbd> full screen</li>
                 <li><kbd>[</kbd> <kbd>]</kbd> sub delay</li>
                 <li><kbd>1</kbd>–<kbd>4</kbd> new / learning / known / ignore the word under the mouse</li>
+            </ul>
+            </details>
+            <details open=""><summary>Data</summary>
+            <ul class="nav-quiet">
+                <li><a href="#backup-section">backup / restore</a></li>
             </ul>
             </details>
             </nav>
@@ -60,12 +68,18 @@
 
             <!-- SEARCH -->
             <section id="search-section">
-                <h1>アニメ Immersion | (CHECK THE KEYS SECTION BEFORE USING )</h1>
+                <h1>アニメ Immersion <small class="h1-note">| (CHECK THE KEYS SECTION BEFORE USING )</small></h1>
                 <div id="continue" class="continue" hidden>
                     <h3 class="continue-title">続きから <small>continue watching</small></h3>
                     <div id="continue-list" class="continue-list"></div>
                 </div>
-                <h2 class="dashed-heading">Add subtitiles</h2>
+                <h2 class="dashed-heading">Add subtitles</h2>
+                <ol class="flow-steps" aria-label="how it works">
+                    <li><b>①</b> 探す search</li>
+                    <li><b>②</b> pick the show</li>
+                    <li><b>③</b> pick a Japanese subtitle</li>
+                    <li><b>④</b> 観る watch</li>
+                </ol>
                 <form id="search-form" class="bubble search-bar">
                     <input id="search-input" type="search" placeholder="search an anime… (e.g. Frieren, 3-gatsu no Lion)" autocomplete="off">
                     <button type="submit">探す</button>
@@ -75,7 +89,7 @@
             </section>
 
             <!-- SELECTED SHOW + SUBTITLES -->
-            <section id="show-section" hidden>
+            <section id="show-section" class="show-layout" hidden>
                 <div class="show-head">
                     <img id="show-cover" alt="">
                     <div>
@@ -86,17 +100,22 @@
                 </div>
 
                 <div class="note sub-browser">
-                    <h3>Japanese subtitles <small>(kitsunekko.net + <a href="https://github.com/Ajatt-Tools/kitsunekko-mirror" target="_blank" rel="noopener">GitHub mirror</a>)</small></h3>
-                    <label class="row">folder
-                        <select id="folder-select"></select>
-                    </label>
-                    <label class="row">find another folder
-                        <input id="folder-filter" type="search" placeholder="type a romaji title…" list="folder-list">
-                        <datalist id="folder-list"></datalist>
-                    </label>
-                    <label class="row">filter files
-                        <input id="file-filter" type="search" placeholder="episode number, e.g. 03">
-                    </label>
+                    <h3><span class="step-no">③</span> Japanese subtitles <small>(kitsunekko.net + <a href="https://github.com/Ajatt-Tools/kitsunekko-mirror" target="_blank" rel="noopener">GitHub mirror</a>)</small></h3>
+                    <div class="sub-browser-controls">
+                        <label>folder
+                            <select id="folder-select"></select>
+                        </label>
+                        <label>episode
+                            <input id="file-filter" type="search" placeholder="filter, e.g. 03">
+                        </label>
+                    </div>
+                    <details class="sub-browser-more">
+                        <summary>wrong show? find another folder</summary>
+                        <label class="row">search folders
+                            <input id="folder-filter" type="search" placeholder="type a romaji title…" list="folder-list">
+                            <datalist id="folder-list"></datalist>
+                        </label>
+                    </details>
                     <p id="files-status" class="status dark"></p>
                     <ul id="file-list" class="file-list"></ul>
                 </div>
@@ -117,10 +136,23 @@
                     <label class="btn">own subtitle file
                         <input id="sub-file" type="file" accept=".srt,.ass,.ssa,.vtt" hidden>
                     </label>
+                    <label class="btn" title="a translation (English, Spanish, Portuguese…) shown above the video">2nd subtitle file
+                        <input id="sub2-file" type="file" accept=".srt,.ass,.ssa,.vtt" hidden>
+                    </label>
                 </div>
                 <div id="audio-bar" class="bubble audio-bar" hidden>
                     <label>audio <select id="audio-track"></select></label>
                     <span id="audio-status" class="audio-status"></span>
+                </div>
+                <div id="sub2-bar" class="bubble sub2-bar" hidden>
+                    <span>2nd subs: <b id="sub2-name"></b></span>
+                    <label>show <select id="sub2-mode"></select></label>
+                    <span class="offset">delay
+                        <button id="sub2-minus" title="2nd subs earlier">−</button>
+                        <output id="sub2-offset">0.0s</output>
+                        <button id="sub2-plus" title="2nd subs later">+</button>
+                    </span>
+                    <button id="sub2-remove" title="remove the 2nd subs">✕</button>
                 </div>
                 <p id="now-playing" class="status"></p>
                 <p id="resume-note" class="status resume-note" hidden></p>
@@ -130,37 +162,50 @@
                         <div id="stage" class="stage">
                             <video id="video" controls controlslist="nofullscreen" playsinline></video>
                             <div id="sub-overlay" class="sub-overlay" lang="ja"></div>
+                            <div id="sub2-overlay" class="sub2-overlay"></div>
                             <div id="comp-badge" class="comp-badge" hidden></div>
                             <p id="stage-empty" class="stage-empty">load a video file or link ↑<br>then pick japanese subs from the search</p>
                         </div>
 
-                        <div class="toolbar">
-                            <button id="prev-line" title="previous line (A)">⏮ line</button>
-                            <button id="replay-line" title="replay line (S)">↻ replay</button>
-                            <button id="next-line" title="next line (D)">line ⏭</button>
-                            <button id="fullscreen" title="full screen with subtitles (F, or double-click the video)">full screen</button>
-                            <span class="sep"></span>
-                            <label><input id="auto-pause" type="checkbox"> auto-pause</label>
-                            <label><input id="blur-subs" type="checkbox"> blur subs</label>
-                            <label><input id="hide-subs" type="checkbox"> hide</label>
-                            <span class="sep"></span>
-                            <span class="offset">delay
-                                <button id="offset-minus" title="subs earlier ([)">−</button>
-                                <output id="offset-value">0.0s</output>
-                                <button id="offset-plus" title="subs later (])">+</button>
-                            </span>
-                            <button id="sync-here" title="make the next subtitle line start right now">sync to now</button>
-                            <label class="size">size <input id="sub-size" type="range" min="16" max="48" value="28"></label>
-                            <span class="sep"></span>
-                            <label>ふりがな
-                                <select id="furigana-mode">
-                                    <option value="unknown">on words I don't know</option>
-                                    <option value="always">always</option>
-                                    <option value="hover">on hover</option>
-                                    <option value="off">off</option>
-                                </select>
-                            </label>
-                            <label title="underline words you don't know (red) and are learning (yellow)"><input id="color-words" type="checkbox" checked> colour words</label>
+                        <div class="toolbar player-toolbar">
+                            <div class="toolbar-main">
+                                <button id="prev-line" title="previous line (A)">⏮ line</button>
+                                <button id="replay-line" title="replay line (S)">↻ replay</button>
+                                <button id="next-line" title="next line (D)">line ⏭</button>
+                                <button id="fullscreen" title="full screen with subtitles (F, or double-click the video)">full screen</button>
+                                <button id="transcript-toggle" class="transcript-toggle" aria-pressed="true" title="show / hide the transcript next to the video">transcript</button>
+                            </div>
+                            <details class="player-settings" data-remember="akko-player-settings-open">
+                                <summary title="subtitle look, timing, furigana and pausing">字幕 settings</summary>
+                                <div class="player-settings-body">
+                                    <div class="settings-group">
+                                        <span class="settings-label">subtitles</span>
+                                        <label><input id="hide-subs" type="checkbox"> hide</label>
+                                        <label><input id="blur-subs" type="checkbox"> blur</label>
+                                        <span class="offset">delay
+                                            <button id="offset-minus" title="subs earlier ([)">−</button>
+                                            <output id="offset-value">0.0s</output>
+                                            <button id="offset-plus" title="subs later (])">+</button>
+                                        </span>
+                                        <button id="sync-here" title="make the next subtitle line start right now">sync to now</button>
+                                        <label class="size">size <input id="sub-size" type="range" min="16" max="48" value="28"></label>
+                                        <label>ふりがな
+                                            <select id="furigana-mode">
+                                                <option value="unknown">on words I don't know</option>
+                                                <option value="always">always</option>
+                                                <option value="hover">on hover</option>
+                                                <option value="off">off</option>
+                                            </select>
+                                        </label>
+                                        <label title="underline words you don't know (red) and are learning (yellow)"><input id="color-words" type="checkbox" checked> colour words</label>
+                                    </div>
+                                    <div class="settings-group">
+                                        <span class="settings-label">behaviour</span>
+                                        <label title="pause at the end of every line"><input id="auto-pause" type="checkbox"> auto-pause</label>
+                                        <label title="pause while the mouse is on a subtitle line"><input id="hover-pause" type="checkbox" checked> pause on hover</label>
+                                    </div>
+                                </div>
+                            </details>
                         </div>
                     </div>
 
@@ -169,6 +214,7 @@
                             <span>transcript</span>
                             <span id="word-stats" class="word-stats"></span>
                             <label><input id="follow" type="checkbox" checked> follow</label>
+                            <button id="transcript-close" class="transcript-close" title="hide the transcript (the video gets wider)">✕</button>
                         </div>
                         <ol id="transcript" class="transcript" lang="ja"></ol>
                     </div>
@@ -180,12 +226,15 @@
                 <h2 class="dashed-heading">Mined words <small id="mined-count"></small></h2>
                 <div class="bubble mined-actions">
                     <button id="export-csv">export for Anki (.tsv)</button>
-                    <button id="clear-mined">clear all</button>
+                    <button id="clear-mined" class="quiet-danger">clear all</button>
                 </div>
+
+                <ul id="mined" class="mined" lang="ja"></ul>
+                <button id="mined-more" class="more" hidden>show more</button>
 
                 <details id="anki-panel" class="note anki-panel">
                     <summary>
-                        <span>Anki</span>
+                        <span>Anki <small class="anki-summary-hint">settings: deck, fields, auto-send</small></span>
                         <span id="anki-status" class="anki-status">not connected</span>
                     </summary>
                     <div class="anki-body">
@@ -206,16 +255,13 @@
                         <p id="anki-msg" class="status dark"></p>
                     </div>
                 </details>
-
-                <ul id="mined" class="mined" lang="ja"></ul>
-                <button id="mined-more" class="more" hidden>show more</button>
             </section>
 
             <!-- BACKUP -->
-            <section id="backup-section">
-                <h2 class="dashed-heading">Backup</h2>
-                <div class="note backup">
-                    <p>Everything is saved in this browser only. Clearing site data, or switching browser or computer, loses it, so keep a backup file.</p>
+            <section id="backup-section" class="quiet-section">
+                <h3 class="quiet-heading">Backup</h3>
+                <div class="backup">
+                    <p class="hint">Everything is saved in this browser only. Clearing site data, or switching browser or computer, loses it, so keep a backup file.</p>
                     <p id="backup-summary" class="backup-summary"></p>
                     <div class="backup-actions">
                         <button id="backup-export">⬇ download backup</button>

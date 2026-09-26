@@ -617,6 +617,29 @@ main .card {
 .stage:fullscreen .popup {font-size: 1.1rem;}
 .stage:fullscreen .comp-badge {top: 16px; right: 16px;}
 
+/* 2nd subs (translation): top of the video, smaller, out of the way */
+.sub2-overlay {
+  position: absolute;
+  left: 6%; right: 6%; top: 5%;
+  text-align: center;
+  font-size: calc(var(--sub-size, 28px) * .7);
+  line-height: 1.35;
+  color: #ffe9a8;
+  pointer-events: none;
+}
+.sub2-overlay .line {
+  display: table;
+  margin: .15em auto 0;
+  padding: .05em .4em;
+  background: #0000008c;
+  border-radius: 6px;
+  text-shadow: 0 0 3px #000;
+  white-space: pre-line;
+}
+.stage:fullscreen .sub2-overlay {font-size: calc(var(--sub-size, 28px) * 1.1);}
+.sub2-bar {display: flex; flex-wrap: wrap; align-items: center; gap: .5em 1em;}
+.sub2-bar #sub2-name {font-weight: normal; max-width: 22em; display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom;}
+
 .sub-overlay.blurred .line {filter: blur(7px); transition: filter .15s;}
 .sub-overlay.blurred .line:hover {filter: none;}
 .sub-overlay.hidden {visibility: hidden;}
@@ -1010,3 +1033,146 @@ main .more {margin: .8em auto; display: block;}
   .sub-browser .row {grid-template-columns: 1fr;}
   .sub-overlay {--sub-size: 18px !important;}
 }
+
+/* =========================================================
+   watch page: calmer layout (everything scoped to .watch-page,
+   so the read + listen pages are untouched)
+   ========================================================= */
+
+.watch-page .h1-note {font-size: .45em; letter-spacing: .5px; text-shadow: 1px 1px var(--text-shadow); opacity: .85; white-space: normal;}
+
+/* ① → ④ the normal way through the page */
+.flow-steps {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .3em .5em;
+  list-style: none; margin: 0 15px .2em; padding: 0 1em;
+  font-size: .85em; font-weight: bold; color: var(--post-bg);
+}
+.flow-steps li {white-space: nowrap;}
+.flow-steps li + li::before {content: "→"; margin-right: .5em; color: var(--border-color);}
+.flow-steps b, .step-no {color: var(--extra3); text-shadow: 1px 1px var(--text-shadow);}
+.watch-page #search-section .search-bar {margin-top: .6em;}
+
+/* ② + ③ selected show beside its subtitle list */
+.show-layout {display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 1.2em; align-items: start;}
+.show-layout .show-head {flex-direction: column; align-items: flex-start; gap: .5em; margin: 0;}
+.show-layout .show-head img {width: 100%; max-width: 170px;}
+.show-layout .show-head h2 {font-size: 1.35em; line-height: 1.25;}
+.show-layout .show-head .muted {font-size: .85em;}
+.show-layout .sub-browser {margin: 0;}
+.show-layout .sub-browser h3 {margin-top: .2em;}
+.show-layout .step-no {color: var(--highlight); text-shadow: none;}
+
+.sub-browser-controls {display: flex; flex-wrap: wrap; gap: .6em 1.2em; margin: .6em 0 .3em;}
+.sub-browser-controls label {display: flex; align-items: center; gap: .5em; font-weight: bold; min-width: 0;}
+.sub-browser-controls label:first-child {flex: 2 1 260px;}
+.sub-browser-controls label:last-child {flex: 1 1 170px;}
+.sub-browser-controls select, .sub-browser-controls input {flex: 1; min-width: 0;}
+.sub-browser-more {margin: .2em 0;}
+.sub-browser-more summary {cursor: pointer; font-size: .9em; color: var(--visited-link-color); width: fit-content;}
+.sub-browser-more summary:hover {color: var(--dark-link-color);}
+.sub-browser-more .row {margin: .4em 0 .2em;}
+.watch-page .file-list {max-height: 300px;}
+
+/* player: line buttons always there, everything else behind "字幕 settings" */
+.watch-page .player-toolbar {display: block; position: relative;}
+.toolbar-main {display: flex; flex-wrap: wrap; gap: .5em; padding-right: 9.5em;}
+.player-settings > summary {
+  position: absolute; top: .7em; right: 1em;
+  list-style: none; cursor: pointer; white-space: nowrap;
+  font-weight: bold;
+  background: var(--post-bg); color: var(--dark-link-color);
+  border: 2px solid var(--border-color); border-radius: 8px;
+  padding: .3em .8em;
+}
+.player-settings > summary::-webkit-details-marker {display: none;}
+.player-settings > summary::after {content: " ▾";}
+.player-settings[open] > summary {background: var(--extra3);}
+.player-settings[open] > summary::after {content: " ▴";}
+.player-settings > summary:hover {background: var(--extra3);}
+.player-settings-body {margin-top: .7em; border-top: 2px dashed var(--border-color);}
+.settings-group {display: flex; flex-wrap: wrap; align-items: center; gap: .5em 1em; padding: .6em 0 0;}
+.settings-group + .settings-group {margin-top: .6em; border-top: 1px dashed var(--border-color);}
+.settings-label {
+  font-size: .75em; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;
+  background: var(--extra5); color: #384775;
+  padding: 0 .5em; border-radius: 4px; min-width: 7.5em; text-align: center;
+}
+.settings-group:nth-child(2) .settings-label {background: var(--extra7);}
+
+/* mined words: the list first; clearing is quiet; Anki settings come after */
+.watch-page .mined-actions {align-items: center; flex-wrap: wrap;}
+main .quiet-danger {margin-left: auto; background: transparent; color: var(--post-bg); border-style: dashed; font-weight: 600; font-size: .9em;}
+main .quiet-danger:hover {background: #c62828; color: #fff; border-color: #c62828;}
+.watch-page .mined {grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));}
+.watch-page .anki-panel {margin: 1.5em 0 0; padding: .6em 1.4em;}
+.watch-page .anki-panel summary {font-size: 1em;}
+.anki-summary-hint {font-weight: 600; font-size: .75em; color: var(--visited-link-color); margin-left: .4em;}
+.watch-page .anki-panel[open] .anki-summary-hint {display: none;}
+
+/* backup: still here, just not shouting */
+.quiet-section {margin-top: 3em;}
+.quiet-heading {
+  margin: 0 15px .4em; padding: 0 1em;
+  font-size: .95em; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--post-bg);
+  border-bottom: 1px dashed var(--border-color);
+}
+.watch-page .quiet-section .backup {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .2em 1.5em;
+  margin: 0 15px; padding: .5em 1em;
+  border: 1px dashed var(--border-color);
+  color: var(--post-bg); font-size: .85em;
+}
+.quiet-section .backup .hint {grid-column: 1; margin: 0;}
+.quiet-section .backup-summary {grid-column: 1; margin: 0; color: var(--extra3);}
+.quiet-section .backup-actions {grid-column: 2; grid-row: 1 / 3; margin: 0;}
+.quiet-section .backup-actions button, .quiet-section .backup-actions .btn {font-size: .95em; padding: .2em .7em;}
+.quiet-section #backup-msg {grid-column: 1 / -1; margin: 0;}
+.quiet-section #backup-msg:empty {display: none;}
+.quiet-section .status.dark {color: var(--extra3);}
+#navi .nav-quiet a {font-weight: 600; font-size: .9em;}
+
+/* narrower main column */
+@container (max-width: 760px) {
+  .show-layout {grid-template-columns: 1fr;}
+  .show-layout .show-head {flex-direction: row; align-items: flex-end;}
+  .show-layout .show-head img {width: 90px;}
+  .watch-page .quiet-section .backup {grid-template-columns: 1fr;}
+  .quiet-section .backup-actions {grid-column: 1; grid-row: auto;}
+}
+@container (max-width: 560px) {
+  .toolbar-main {padding-right: 0;}
+  .toolbar-main button {flex: 1 1 auto;}
+  .player-settings > summary {position: static; display: block; text-align: center; margin-top: .5em;}
+  .settings-label {min-width: 0; flex-basis: 100%; text-align: left; background: none; color: var(--extra3); padding: 0;}
+  .settings-group:nth-child(2) .settings-label {background: none;}
+  .anki-summary-hint {display: none;}
+}
+@media only screen and (max-width: 600px) {
+  .watch-page #search-section h1 {font-size: 24px; padding: .3em .6em;}
+  .watch-page .dashed-heading {margin-inline: 0; padding: 0 .5em;}
+  .flow-steps {margin-inline: 0; padding: 0 .5em;}
+  .watch-page .anki-body .row {grid-template-columns: 1fr; gap: .2em;}
+  .watch-page .anki-panel {padding: .6em .9em;}
+  .quiet-heading, .watch-page .quiet-section .backup {margin-inline: 0;}
+}
+.sub-browser-controls label, .sub-browser-more .row {color: var(--dark-link-color);}
+
+/* the transcript can be closed; the video then takes the whole width */
+.player-layout.no-transcript {grid-template-columns: minmax(0, 1fr);}
+.player-layout.no-transcript .transcript-col {display: none;}
+.watch-page .transcript-head label {margin-left: auto;}
+main .transcript-close {padding: 0 .45em; font-size: .85em; line-height: 1.4;}
+main .transcript-toggle[aria-pressed="true"] {background: var(--extra3);}
+main .transcript-toggle[aria-pressed="false"] {border-style: dashed;}
+
+/* ---- about ---- */
+.about-note {color: #333; font-size: .95em; padding: .8em 1.4em;}
+.about-note p {margin: .4em 0;}
+.about-note .btn, .about-note .btn:visited {color: var(--dark-link-color);}
+.about-note .btn {display: inline-block; white-space: normal; word-break: break-all; text-decoration: none;}
+.about-links {list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 12px;}
+.about-links li.note {display: flex; flex-direction: column; gap: .1em; margin: 0; padding: .8em 1.2em; color: #333; font-size: .95em;}
+.about-links b {color: var(--dark-link-color); letter-spacing: 1px;}
+.about-links a {color: var(--dark-link-color); font-weight: bold; word-break: break-all;}
+.about-handle {font-weight: bold; user-select: all;}

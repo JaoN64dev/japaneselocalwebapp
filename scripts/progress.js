@@ -7,9 +7,11 @@ import { store, escapeHtml, timeFormatter, episodeOf } from "./core/utils.js";
 import { pctLevel } from "./words/status.js";
 import { loadSubtitleText, setOffset } from "./player/cues.js";
 import { reopen } from "./player/video.js";
+import * as subs2 from "./player/subs2.js";
 
 export const KEY = "akko-progress";
 const SUB_PREFIX = "akko-subtext:";
+const SUB2_PREFIX = "akko-subtext2:";    // 2nd subs (translation)
 const KEEP = 40;          // videos remembered
 const KEEP_SUBS = 15;     // of those, how many keep their subtitle text (localStorage is small)
 
@@ -22,7 +24,9 @@ let current = null;       // key of the video that's loaded
 let lastSave = 0;
 
 const recent = () => Object.values(all).sort((a, b) => b.updated - a.updated);
-const dropSub = (key) => { try { localStorage.removeItem(SUB_PREFIX + key); } catch { /* ignore */ } };
+const dropSub = (key) => {
+    try { localStorage.removeItem(SUB_PREFIX + key); localStorage.removeItem(SUB2_PREFIX + key); } catch { /* ignore */ }
+};
 
 function persist() {
     recent().forEach((r, i) => {
@@ -45,8 +49,18 @@ export function saveSub(sub) {
     update({ sub: sub.name });
 }
 
-function savedSub(key) {
-    try { return JSON.parse(localStorage.getItem(SUB_PREFIX + key)); } catch { return null; }
+// null removes it
+export function saveSub2(sub) {
+    if (!current) return;
+    try {
+        if (sub) localStorage.setItem(SUB2_PREFIX + current, JSON.stringify(sub));
+        else localStorage.removeItem(SUB2_PREFIX + current);
+    } catch { /* storage full */ }
+    update({ sub2: sub ? sub.name : "", offset2: 0 });
+}
+
+function savedSub(key, prefix = SUB_PREFIX) {
+    try { return JSON.parse(localStorage.getItem(prefix + key)); } catch { return null; }
 }
 
 function saveTime() {
@@ -72,6 +86,7 @@ export function open(key, info) {
     } else if (state.subRaw && !state.subRestored) {
         saveSub(state.subRaw);          // subs were picked before the video
     }
+    subs2.onVideoOpened(rec && savedSub(key, SUB2_PREFIX), rec ? rec.offset2 || 0 : 0);
 
     note.hidden = true;
     const resumeAt = rec ? rec.time : 0;

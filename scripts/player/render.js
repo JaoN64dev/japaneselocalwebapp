@@ -7,6 +7,7 @@ import { pctLevel } from "../words/status.js";
 import { tokensHtml, plainHtml, unknownIn, comprehension } from "../words/render.js";
 import { activeCues, cueIndexAt } from "./cues.js";
 import * as progress from "../progress.js";
+import * as subs2 from "./subs2.js";
 
 let shownKey = "";         // which cues the overlay is showing, to skip needless redraws
 
@@ -15,6 +16,7 @@ const cueHtml = (cue) => (cue.tokens ? tokensHtml(cue.tokens) : plainHtml(cue.te
 // ---------- overlay + transcript ----------
 
 export function renderSubtitle() {
+    subs2.render();
     const t = el.video.currentTime;
     const active = activeCues(t);
     const key = active.map((c) => c.start + c.text).join("|");
