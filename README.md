@@ -112,12 +112,31 @@ scripts/         the code that runs in the browser
 index.html       watch page
 reading.html     reading page
 podcasts.html    listening page
+about.html       about page
 data/            offline dictionary files
 ```
 
-## Credits
+## Data sources and licenses
 
-- Dictionary: [JMdict](https://www.edrdg.org/jmdict/j_jmdict.html) and [KANJIDIC2](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project) (EDRDG, CC BY-SA 4.0), through [jmdict-simplified](https://github.com/scriptin/jmdict-simplified)
-- Pitch accent: [Kanjium](https://github.com/mifunetoshiro/kanjium)
-- Word splitting: [kuromoji](https://github.com/takuyaa/kuromoji.js)
-- Subtitles: [kitsunekko.net](https://kitsunekko.net)
+The files in `data/` are **not** covered by this project's MIT license. They come from these projects and keep their own licenses:
+
+| File | Source | License |
+| --- | --- | --- |
+| `data/dict.json` | [JMdict](https://www.edrdg.org/jmdict/j_jmdict.html) by the [Electronic Dictionary Research and Development Group](https://www.edrdg.org/) (EDRDG), converted with [jmdict-simplified](https://github.com/scriptin/jmdict-simplified) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| `data/kanji.json` | [KANJIDIC2](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project) by the EDRDG | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| `data/accents.txt` | [Kanjium](https://github.com/mifunetoshiro/kanjium) (pitch accent data from Wadoku) | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+
+These files are used under the [EDRDG licence](https://www.edrdg.org/edrdg/licence.html) and the Kanjium license. If you share modified versions of them, they must stay under CC BY-SA 4.0 and keep this credit.
+
+## Other credits
+
+- Word splitting: [kuromoji](https://github.com/takuyaa/kuromoji.js) (Apache 2.0)
+- Anime search: [AniList](https://anilist.co) API
+- Subtitles: [kitsunekko.net](https://kitsunekko.net) and the [kitsunekko mirror](https://github.com/Ajatt-Tools/kitsunekko-mirror) on GitHub
+- Word audio: [JapanesePod101](https://www.japanesepod101.com/) and [Lingua Libre](https://lingualibre.org/) (Wikimedia Commons)
+
+The app fetches subtitles and word audio from these sites while you use it. It doesn't include any of their files, and it may stop working if they change.
+
+## License
+
+The code is released under the [MIT License](LICENSE). The dictionary data in `data/` has its own licenses (see above).
